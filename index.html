@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kumbung Jamur | Ahmad Fauzan Eka Wardani-Roby Ahmad Firdaus</title>
+    <!-- Firebase SDK v8 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Bentuk jamur yang dipakai ulang -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="m" viewBox="0 0 120 140">
+        <path d="M8 72 C8 30 34 6 60 6 C86 6 112 30 112 72 Z"/>
+        <path d="M46 72 H74 C74 96 79 116 86 132 H34 C41 116 46 96 46 72 Z"/>
+        <circle cx="38" cy="42" r="7" fill="var(--humus)" fill-opacity=".55"/>
+        <circle cx="66" cy="26" r="5" fill="var(--humus)" fill-opacity=".55"/>
+        <circle cx="86" cy="50" r="8" fill="var(--humus)" fill-opacity=".55"/>
+    </symbol>
+</svg>
+
+<!-- Latar jamur transparan -->
+<div class="bg" aria-hidden="true">
+    <svg class="bg-shroom" style="left:-2%;top:6%;width:190px;--r:-14deg;--o:.10"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:70%;top:2%;width:120px;--r:12deg;--o:.07"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:88%;top:24%;width:210px;--r:18deg;--o:.09"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:8%;top:40%;width:110px;--r:8deg;--o:.06"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:46%;top:52%;width:160px;--r:-10deg;--o:.06"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:-3%;top:70%;width:230px;--r:10deg;--o:.10"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:78%;top:68%;width:140px;--r:-16deg;--o:.08"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:30%;top:88%;width:100px;--r:14deg;--o:.07"><use href="#m"/></svg>
+    <svg class="bg-shroom" style="left:92%;top:88%;width:170px;--r:-8deg;--o:.10"><use href="#m"/></svg>
+</div>
+
+<main class="page">
+
+    <header class="topbar">
+        <div class="brand">
+            <svg class="logo" viewBox="0 0 120 140"><use href="#m"/></svg>
+            <span>Kumbung Jamur</span>
+        </div>
+        <div class="conn" id="connStatus">
+            <span class="dot"></span><span id="connText">Menghubungkan…</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="avatar" aria-hidden="true">
+            <svg viewBox="0 0 120 140"><use href="#m"/></svg>
+        </div>
+        <div>
+            <h1>Monitoring Perkembangan Jamur</h1>
+            <p class="owner">Dikelola oleh<br><strong>-Ahmad Fauzan Eka Wardani (244101070117)
+            </strong><br><strong>-Roby Ahmad Firdaus (244101070006)</strong></p>
+        </div>
+    </section>
+    <div class="rule"></div>
+
+    <div class="grid">
+
+        <!-- Kelembapan: jamur yang terisi sesuai persentase -->
+        <section class="panel humidity" aria-labelledby="hLabel">
+            <h2 id="hLabel">Kelembapan ruangan</h2>
+            <div class="humidity-body">
+                <svg class="shroom" viewBox="0 0 120 140" role="img" aria-label="Level kelembapan">
+                    <defs>
+                        <clipPath id="shroomShape">
+                            <path d="M8 72 C8 30 34 6 60 6 C86 6 112 30 112 72 Z"/>
+                            <path d="M46 72 H74 C74 96 79 116 86 132 H34 C41 116 46 96 46 72 Z"/>
+                        </clipPath>
+                    </defs>
+                    <g class="shroom-base">
+                        <path d="M8 72 C8 30 34 6 60 6 C86 6 112 30 112 72 Z"/>
+                        <path d="M46 72 H74 C74 96 79 116 86 132 H34 C41 116 46 96 46 72 Z"/>
+                    </g>
+                    <rect id="humidFill" class="humid-fill" x="0" y="132" width="120" height="0" clip-path="url(#shroomShape)"/>
+                    <line class="threshold" x1="0" x2="120" y1="43.8" y2="43.8"/>
+                </svg>
+                <div class="humidity-read">
+                    <div class="value" id="lembabVal">-- %</div>
+                    <div class="hint">Garis putus-putus: batas 70%. Di bawahnya sanyo menyala otomatis.</div>
+                    <div class="status-badge" id="statusPompa">Status Pompa: Menunggu...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suhu -->
+        <section class="panel temp" aria-labelledby="tLabel">
+            <h2 id="tLabel">Suhu ruangan</h2>
+            <div class="value temp-value" id="suhuVal">-- °C</div>
+            <div class="scale" aria-hidden="true">
+                <div class="scale-ideal"></div>
+                <div class="scale-marker" id="suhuMarker"></div>
+            </div>
+            <div class="scale-labels"><span>15°</span><span>Ideal 22–28°</span><span>40°</span></div>
+        </section>
+
+        <!-- Kontrol -->
+        <section class="panel controls" aria-labelledby="cLabel">
+            <h2 id="cLabel">Panel Kontrol Relay</h2>
+
+            <div class="switch-row">
+                <div>
+                    <strong>Sistem otomatis</strong>
+                    <small>Sanyo menyala otomatis jika kelembapan &lt; 70%</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="autoToggle" onchange="updateFirebase('auto')" aria-label="Sistem otomatis">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="switch-row">
+                <div>
+                    <strong>Sanyo manual</strong>
+                    <small>Hanya aktif jika sistem otomatis mati</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="manualToggle" onchange="updateFirebase('manual')" aria-label="Sanyo manual">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
